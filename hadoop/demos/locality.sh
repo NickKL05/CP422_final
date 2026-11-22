@@ -3,7 +3,7 @@
 # the nodes holding their blocks (the "Data-local map tasks" counter of a job over that data).
 # Run inside the namenode container:  bash /opt/cp422/demos/locality.sh
 #
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script. Reviewed and tested by Nick Kunde-Lenny.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"

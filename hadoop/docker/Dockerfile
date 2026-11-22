@@ -1,6 +1,6 @@
 # CP422 local Hadoop stack: one image, with the role picked by the container command.
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this Dockerfile
-# (version choices, download steps, env layout). Reviewed, built and tested by Member 1.
+# (version choices, download steps, env layout). Reviewed, built and tested by Nick Kunde-Lenny.
 
 FROM eclipse-temurin:8-jdk-jammy
 

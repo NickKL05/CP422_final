@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Container entrypoint. The role comes from the compose "command": master | worker | hbase | client
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this start-up script
-# (role dispatch, start-up ordering and waits, one-time HDFS init). Reviewed and tested by Member 1.
+# (role dispatch, start-up ordering and waits, one-time HDFS init). Reviewed and tested by Nick Kunde-Lenny.
 set -uo pipefail
 
 ROLE="${1:-client}"

@@ -6,7 +6,7 @@
 # max_concurrent_maps (0 = no limit) throttles the job so it outlives the about 90 s dead-node timeout
 # in the fault-tolerance demo. Otherwise all 53 maps finish in about 15 s.
 #
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script. Reviewed and tested by Nick Kunde-Lenny.
 set -euo pipefail
 
 TAG="${1:-adhoc}"

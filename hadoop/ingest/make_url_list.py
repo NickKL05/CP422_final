@@ -7,7 +7,7 @@ The MD5 and size come from GDELT's own index files, so each mapper can check its
 Usage:  python3 make_url_list.py --start 2026-10-01 --end 2026-10-31 --out urls.txt
 
 AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script
-(index parsing, date filtering, output format). Reviewed and tested by Member 1.
+(index parsing, date filtering, output format). Reviewed and tested by Nick Kunde-Lenny.
 """
 import argparse
 import datetime as dt

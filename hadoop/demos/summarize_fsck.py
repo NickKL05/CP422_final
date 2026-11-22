@@ -6,7 +6,7 @@ Usage: python3 summarize_fsck.py fsck_blocks.txt dfsadmin_report.txt
 Prints: blocks per file, replica count per DataNode (by hostname), the replication-factor
 histogram, and a few example blocks with the nodes that hold them.
 
-AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this parser. Reviewed and tested by Member 1.
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this parser. Reviewed and tested by Nick Kunde-Lenny.
 """
 import collections
 import re

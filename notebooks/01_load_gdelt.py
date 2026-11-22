@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # 01 · Load GDELT into Delta (Member 1)
+# MAGIC # 01 · Load GDELT into Delta (Nick Kunde-Lenny)
 # MAGIC
 # MAGIC Loads GDELT 1.0 daily event files into **`workspace.gdelt.events_bronze`**, a Delta table **partitioned by year and month**
 # MAGIC of the file date (`DATEADDED`), stored as `file_year` and `file_month`. They can't be called `year` and `month`, because GDELT already has
@@ -18,7 +18,7 @@
 
 # COMMAND ----------
 
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Nick Kunde-Lenny.
 # Declared here, not only in 00_config: widgets created inside a %run notebook don't show in this
 # notebook's parameter bar. Every top-level notebook should start with this cell.
 dbutils.widgets.dropdown("sample_mode", "true", ["true", "false"], "SAMPLE_MODE")
@@ -30,7 +30,7 @@ dbutils.widgets.dropdown("sample_mode", "true", ["true", "false"], "SAMPLE_MODE"
 # COMMAND ----------
 
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (widgets, UC objects, load-log DDL).
-# Reviewed and tested by Member 1.
+# Reviewed and tested by Nick Kunde-Lenny.
 import time, datetime as dt
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pyspark.sql import functions as F
@@ -80,7 +80,7 @@ print(f"source={SOURCE}  range={range_start}..{range_end}  force_reload={FORCE_R
 
 # COMMAND ----------
 
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Nick Kunde-Lenny.
 files = []
 if SOURCE == "download":
     try:
@@ -102,7 +102,7 @@ if SOURCE == "download":
 # COMMAND ----------
 
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted these load functions (parallel download,
-# replaceWhere partition overwrite, load log). Reviewed and tested by Member 1.
+# replaceWhere partition overwrite, load log). Reviewed and tested by Nick Kunde-Lenny.
 
 def loaded_months():
     return {(r.year, r.month): r.files for r in
@@ -161,7 +161,7 @@ def load_month_parquet(year, month):
 
 # COMMAND ----------
 
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this driver loop. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this driver loop. Reviewed and tested by Nick Kunde-Lenny.
 done = loaded_months()
 summary = []
 
@@ -198,7 +198,7 @@ print(f"loaded {len(summary)} month(s) this run")
 
 # COMMAND ----------
 
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted these checks. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted these checks. Reviewed and tested by Nick Kunde-Lenny.
 per_month = spark.sql(f"""
   SELECT {gc.PART_YEAR}, {gc.PART_MONTH}, COUNT(*) AS rows, COUNT(DISTINCT source_file) AS files,
          MIN(SQLDATE) AS min_sqldate, MAX(SQLDATE) AS max_sqldate
@@ -229,7 +229,7 @@ print(f"rows with missing trailing columns: {bad:,}")
 
 # COMMAND ----------
 
-# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Member 1.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Nick Kunde-Lenny.
 import glob
 
 repo_hadoop_out = None

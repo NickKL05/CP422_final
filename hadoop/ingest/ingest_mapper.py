@@ -14,7 +14,7 @@ simply be re-run. Downloads are retried and MD5-checked. The `hdfs dfs -put` run
 that ran the map task, so HDFS puts the first replica of every block on that worker's own DataNode.
 
 AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this mapper (streaming protocol,
-retry/MD5 logic, counters, HDFS put). Reviewed and tested by Member 1.
+retry/MD5 logic, counters, HDFS put). Reviewed and tested by Nick Kunde-Lenny.
 """
 import hashlib
 import os

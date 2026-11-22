@@ -4,7 +4,7 @@
 # Captured output goes to hadoop/output/ on the host.
 #
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this driver script
-# (job options, manifest capture, summary). Reviewed and tested by Member 1.
+# (job options, manifest capture, summary). Reviewed and tested by Nick Kunde-Lenny.
 set -euo pipefail
 
 START="${1:-2026-10-01}"

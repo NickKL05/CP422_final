@@ -1,6 +1,6 @@
 # CP422 local Hadoop cluster: 1 master + 3 workers + HBase, all from one image.
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this compose file
-# (topology, ports, volumes, memory limits). Reviewed and tested by Member 1.
+# (topology, ports, volumes, memory limits). Reviewed and tested by Nick Kunde-Lenny.
 #
 #   namenode : NameNode, YARN ResourceManager, MapReduce JobHistory; also the client where jobs, Pig and Spark are launched
 #   worker1-3: DataNode + NodeManager (co-located for data locality)

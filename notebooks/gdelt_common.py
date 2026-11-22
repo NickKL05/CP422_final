@@ -4,7 +4,7 @@ Kept free of Databricks-only APIs (dbutils, display) so the same code can be uni
 local Spark and imported from a notebook (Databricks Git folders put the repo on sys.path).
 
 AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this module (GDELT 1.0 column list,
-index parsing, download/unzip helper, Spark reader options). Reviewed and tested by Member 1.
+index parsing, download/unzip helper, Spark reader options). Reviewed and tested by Nick Kunde-Lenny.
 """
 import datetime as dt
 import hashlib

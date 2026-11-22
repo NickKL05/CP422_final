@@ -1,6 +1,6 @@
-# Local Hadoop cluster (Member 1)
+# Local Hadoop cluster (Nick Kunde-Lenny)
 
-<!-- AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this README's run instructions. Reviewed by Member 1. -->
+<!-- AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this README's run instructions. Reviewed by Nick Kunde-Lenny. -->
 
 This folder holds everything that runs on the local Docker cluster: HDFS, YARN, the MapReduce
 ingestion job, the Pig and HBase pieces, and the scaling study. The Databricks notebook does **not**

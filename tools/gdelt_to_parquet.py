@@ -11,7 +11,7 @@ then run 01_load_gdelt with the "source" widget set to parquet_upload.
 Setup:  pip install pyarrow
 Usage:  python tools/gdelt_to_parquet.py --start 2026-10-01 --end 2026-10-31 --out gdelt_parquet
 
-AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this tool. Reviewed and tested by Member 1.
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this tool. Reviewed and tested by Nick Kunde-Lenny.
 """
 import argparse
 import io

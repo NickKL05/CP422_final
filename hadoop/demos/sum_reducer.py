@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Streaming reducer: add up the per-split row counts produced by the `wc -l` mappers.
 
-AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this reducer. Reviewed and tested by Member 1.
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this reducer. Reviewed and tested by Nick Kunde-Lenny.
 """
 import sys
 

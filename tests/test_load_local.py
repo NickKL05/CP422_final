@@ -14,7 +14,7 @@ Run (from the repo root, Docker running):
     --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog \
     tests/test_load_local.py
 
-AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this test. Reviewed and run by Member 1.
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this test. Reviewed and run by Nick Kunde-Lenny.
 """
 import sys
 import time

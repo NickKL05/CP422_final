@@ -13,7 +13,7 @@
 #   5. "after" snapshot, then bring worker3 back and show the excess replicas being cleaned up
 #
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this script
-# (timeline, polling, capture). Reviewed and tested by Member 1.
+# (timeline, polling, capture). Reviewed and tested by Nick Kunde-Lenny.
 set -uo pipefail
 export MSYS_NO_PATHCONV=1   # stop Git Bash rewriting /gdelt/... into Windows paths
 

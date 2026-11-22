@@ -13,7 +13,7 @@
 # COMMAND ----------
 
 # AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this config cell (widget, names, date ranges).
-# Reviewed and tested by Member 1.
+# Reviewed and tested by Nick Kunde-Lenny.
 import os, sys
 
 # Databricks Git folders put the notebook's folder on sys.path, so gdelt_common.py imports directly.
@@ -41,8 +41,8 @@ VOLUME = "raw"
 VOLUME_ROOT = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}"
 
 # Tables
-EVENTS_BRONZE = f"{CATALOG}.{SCHEMA}.events_bronze"   # raw GDELT rows as strings, partitioned by file_year/file_month (Member 1)
-LOAD_LOG = f"{CATALOG}.{SCHEMA}.load_log"             # one row per loaded month: files, rows, seconds (Member 1)
+EVENTS_BRONZE = f"{CATALOG}.{SCHEMA}.events_bronze"   # raw GDELT rows as strings, partitioned by file_year/file_month (Nick Kunde-Lenny)
+LOAD_LOG = f"{CATALOG}.{SCHEMA}.load_log"             # one row per loaded month: files, rows, seconds (Nick Kunde-Lenny)
 
 # Date ranges (GDELT file dates = DATEADDED)
 SAMPLE_START, SAMPLE_END = "2026-10-01", "2026-10-31"
