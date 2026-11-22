@@ -1,0 +1,20 @@
+# 01:10:12Z before failure
+Status: HEALTHY
+ Number of data-nodes:	3
+ Total blocks (validated):	53 (avg. block size 23708854 B)
+ Minimally replicated blocks:	53 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Average block replication:	2.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+DFS Used: 3252970826 (3.03 GB)
+Name: 172.18.0.3:9866 (worker1.cp422_hadoop)
+Hostname: worker1
+DFS Used: 589223391 (561.93 MB)
+Name: 172.18.0.4:9866 (worker2.cp422_hadoop)
+Hostname: worker2
+DFS Used: 1625469605 (1.51 GB)
+Name: 172.18.0.5:9866 (worker3.cp422_hadoop)
+Hostname: worker3
+DFS Used: 1038277830 (990.18 MB)

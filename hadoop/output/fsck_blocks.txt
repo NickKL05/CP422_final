@@ -1,0 +1,160 @@
+Connecting to namenode via http://namenode:9870/fsck?ugi=root&files=1&blocks=1&locations=1&path=%2Fgdelt%2Fraw%2Fevents
+FSCK started by root (auth:SIMPLE) from /172.18.0.2 for path /gdelt/raw/events at Sun Nov 22 00:54:35 UTC 2026
+
+/gdelt/raw/events <dir>
+/gdelt/raw/events/year=2026 <dir>
+/gdelt/raw/events/year=2026/month=10 <dir>
+/gdelt/raw/events/year=2026/month=10/20261001.export.CSV 46612793 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742009_1188 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742011_1190 len=13058361 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261002.export.CSV 42928155 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742019_1198 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742021_1200 len=9373723 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261003.export.CSV 27078516 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741958_1137 len=27078516 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261004.export.CSV 23706100 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741977_1156 len=23706100 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261005.export.CSV 41284757 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741964_1143 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741965_1144 len=7730325 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261006.export.CSV 46170058 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741988_1167 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741992_1171 len=12615626 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261007.export.CSV 46126981 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741956_1135 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741957_1136 len=12572549 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261008.export.CSV 47204596 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741975_1154 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741976_1155 len=13650164 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261009.export.CSV 45494980 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741962_1141 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741963_1142 len=11940548 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261010.export.CSV 29390798 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741981_1160 len=29390798 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261011.export.CSV 26328597 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741961_1140 len=26328597 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261012.export.CSV 40881920 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741984_1163 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741985_1164 len=7327488 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261013.export.CSV 45887534 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741959_1138 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741960_1139 len=12333102 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261014.export.CSV 48881720 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741980_1159 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741983_1162 len=15327288 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261015.export.CSV 48833357 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741969_1148 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741970_1149 len=15278925 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261016.export.CSV 46382829 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741994_1173 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741996_1175 len=12828397 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261017.export.CSV 28124259 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741966_1145 len=28124259 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261018.export.CSV 25366595 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741990_1169 len=25366595 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261019.export.CSV 43961707 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741967_1146 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741968_1147 len=10407275 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261020.export.CSV 48975730 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741991_1170 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741993_1172 len=15421298 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261021.export.CSV 50267357 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741972_1151 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741974_1153 len=16712925 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261022.export.CSV 48210033 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742001_1180 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742002_1181 len=14655601 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261023.export.CSV 46163472 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741971_1150 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073741973_1152 len=12609040 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261024.export.CSV 29752214 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073741999_1178 len=29752214 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261025.export.CSV 24982717 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742005_1184 len=24982717 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261026.export.CSV 42261054 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742014_1193 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742015_1194 len=8706622 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261027.export.CSV 46866411 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742006_1185 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.3:9866,DS-02132cd4-5155-4ef7-873f-18a289dbc16e,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742007_1186 len=13311979 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261028.export.CSV 48319116 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742017_1196 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742018_1197 len=14764684 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261029.export.CSV 46712709 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742008_1187 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742010_1189 len=13158277 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261030.export.CSV 44773659 bytes, replicated: replication=2, 2 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742020_1199 len=33554432 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK], DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK]]
+1. BP-1798479594-172.18.0.2-1795306865072:blk_1073742022_1201 len=11219227 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+/gdelt/raw/events/year=2026/month=10/20261031.export.CSV 28638584 bytes, replicated: replication=2, 1 block(s):  OK
+0. BP-1798479594-172.18.0.2-1795306865072:blk_1073742012_1191 len=28638584 Live_repl=2  [DatanodeInfoWithStorage[172.18.0.4:9866,DS-d46c933a-e5c8-4246-a1a0-94c79e6c6783,DISK], DatanodeInfoWithStorage[172.18.0.5:9866,DS-6c32128b-b15a-441c-bb8f-4f8fdd993b2f,DISK]]
+
+
+Status: HEALTHY
+ Number of data-nodes:	3
+ Number of racks:		1
+ Total dirs:			3
+ Total symlinks:		0
+
+Replicated Blocks:
+ Total size:	1256569308 B
+ Total files:	31
+ Total blocks (validated):	53 (avg. block size 23708854 B)
+ Minimally replicated blocks:	53 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Mis-replicated blocks:		0 (0.0 %)
+ Default replication factor:	2
+ Average block replication:	2.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+ Missing replicas:		0 (0.0 %)
+ Blocks queued for replication:	0
+
+Erasure Coded Block Groups:
+ Total size:	0 B
+ Total files:	0
+ Total block groups (validated):	0
+ Minimally erasure-coded block groups:	0
+ Over-erasure-coded block groups:	0
+ Under-erasure-coded block groups:	0
+ Unsatisfactory placement block groups:	0
+ Average block group size:	0.0
+ Missing block groups:		0
+ Corrupt block groups:		0
+ Missing internal blocks:	0
+ Blocks queued for replication:	0
+FSCK ended at Sun Nov 22 00:54:35 UTC 2026 in 3 milliseconds
+
+
+The filesystem under path '/gdelt/raw/events' is HEALTHY

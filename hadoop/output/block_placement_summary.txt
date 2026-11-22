@@ -1,0 +1,25 @@
+files: 31   blocks: 53   blocks per file: 1.71
+
+replicas stored per DataNode:
+  worker1       16 replicas  ( 15.1 %)
+  worker2       53 replicas  ( 50.0 %)
+  worker3       37 replicas  ( 34.9 %)
+
+replication factor histogram (replicas -> blocks):
+  2 -> 53
+
+example block placements:
+  20261001.export.CSV      32.0 MB  on worker2, worker3
+  20261001.export.CSV      12.5 MB  on worker2, worker3
+  20261002.export.CSV      32.0 MB  on worker2, worker3
+  20261002.export.CSV       8.9 MB  on worker3, worker2
+  20261003.export.CSV      25.8 MB  on worker3, worker2
+  20261004.export.CSV      22.6 MB  on worker3, worker2
+ Number of data-nodes:	3
+ Total size:	1256569308 B
+ Total files:	31
+ Total blocks (validated):	53 (avg. block size 23708854 B)
+ Minimally replicated blocks:	53 (100.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Default replication factor:	2
+ Average block replication:	2.0

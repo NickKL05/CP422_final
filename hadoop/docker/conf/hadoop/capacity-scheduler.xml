@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this config. Reviewed and tested by Member 1. -->
+<configuration>
+  <property>
+    <name>yarn.scheduler.capacity.maximum-applications</name>
+    <value>10000</value>
+  </property>
+  <property>
+    <!-- A single-user demo cluster. Let AMs use up to half the cluster so a job and a Spark app can run side by side. -->
+    <name>yarn.scheduler.capacity.maximum-am-resource-percent</name>
+    <value>0.5</value>
+  </property>
+  <property>
+    <!-- Schedule on memory AND vcores. The default calculator ignores vcores, which would make
+         "executor cores = 1, 2, 4, 8" in the scaling study meaningless. -->
+    <name>yarn.scheduler.capacity.resource-calculator</name>
+    <value>org.apache.hadoop.yarn.util.resource.DominantResourceCalculator</value>
+  </property>
+  <property>
+    <!-- How many scheduling opportunities to wait for a node-local slot (shows up in the data-local map task counter). -->
+    <name>yarn.scheduler.capacity.node-locality-delay</name>
+    <value>40</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.queues</name>
+    <value>default</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.capacity</name>
+    <value>100</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.maximum-capacity</name>
+    <value>100</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.user-limit-factor</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.state</name>
+    <value>RUNNING</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.acl_submit_applications</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.default.acl_administer_queue</name>
+    <value>*</value>
+  </property>
+</configuration>

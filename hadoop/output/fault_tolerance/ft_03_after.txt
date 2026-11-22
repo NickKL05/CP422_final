@@ -1,0 +1,17 @@
+# 01:14:06Z after re-replication
+Status: HEALTHY
+ Number of data-nodes:	2
+ Total blocks (validated):	53 (avg. block size 23708854 B)
+ Minimally replicated blocks:	53 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Average block replication:	2.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+
+# job result and failure-related counters
+2026-11-22 01:14:04,057 INFO mapreduce.Job: Job job_1795308500181_0007 completed successfully
+Launched map tasks=53
+Data-local map tasks=53
+total_rows	3195940
+input_splits	53

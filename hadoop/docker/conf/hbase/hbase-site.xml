@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this config. Reviewed and tested by Member 1.
+     HBase runs in standalone mode (master, regionserver and ZooKeeper in one JVM in the "hbase"
+     container), but its data lives on our HDFS, so tables are stored as HDFS blocks with replication 2. -->
+<configuration>
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://namenode:9000/hbase</value>
+  </property>
+  <property>
+    <!-- Standalone mode starts its embedded ZooKeeper on localhost only, so the quorum has to be
+         localhost. Other containers and the host talk to HBase through Thrift (port 9090), not ZooKeeper. -->
+    <name>hbase.zookeeper.quorum</name>
+    <value>localhost</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/data/zookeeper</value>
+  </property>
+  <property>
+    <name>hbase.tmp.dir</name>
+    <value>/data/hbase-tmp</value>
+  </property>
+  <property>
+    <name>hbase.unsafe.stream.capability.enforce</name>
+    <value>false</value>
+  </property>
+</configuration>

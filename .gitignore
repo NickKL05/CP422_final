@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+# Raw GDELT downloads never go in git (the captured job output under hadoop/output/ does)
+*.CSV
+*.CSV.zip

@@ -1,0 +1,7 @@
+# Shell and Python scripts run inside Linux containers, so they must keep LF line endings even on Windows checkouts.
+*.sh   text eol=lf
+*.py   text eol=lf
+*.pig  text eol=lf
+*.xml  text eol=lf
+*.conf text eol=lf
+Dockerfile text eol=lf

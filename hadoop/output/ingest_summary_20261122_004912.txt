@@ -1,0 +1,18 @@
+GDELT ingestion run 20261122_004912
+date range        : 2026-10-01 .. 2026-10-31
+lines per map     : 2
+wall-clock seconds: 46
+
+files by status:
+     31 OK
+
+files and rows ingested per worker (shows the work was spread over the cluster):
+  worker1     10 files    1127990 rows
+  worker2      9 files     795619 rows
+  worker3     12 files    1272331 rows
+
+total rows ingested this run: 3195940
+
+HDFS raw area after the run:
+           3           31              1.2 G /gdelt/raw/events
+1.2 G  2.3 G  /gdelt/raw/events

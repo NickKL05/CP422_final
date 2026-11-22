@@ -1,0 +1,5 @@
+Launched map tasks=53
+Data-local map tasks=52
+Rack-local map tasks=1
+total_rows	3195940
+input_splits	53

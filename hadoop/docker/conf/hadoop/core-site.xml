@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this config. Reviewed and tested by Member 1. -->
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode:9000</value>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/data/tmp</value>
+  </property>
+  <property>
+    <!-- Lets the web UIs browse HDFS as root (local demo cluster only, no security). -->
+    <name>hadoop.http.staticuser.user</name>
+    <value>root</value>
+  </property>
+</configuration>

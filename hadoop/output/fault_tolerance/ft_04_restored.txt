@@ -1,0 +1,10 @@
+# 01:14:32Z worker3 back (excess replicas get deleted by the NameNode)
+Status: HEALTHY
+ Number of data-nodes:	3
+ Total blocks (validated):	53 (avg. block size 23708854 B)
+ Minimally replicated blocks:	53 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Average block replication:	2.0
+ Missing blocks:		0
+ Corrupt blocks:		0

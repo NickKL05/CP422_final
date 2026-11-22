@@ -1,0 +1,92 @@
+# CP422 local Hadoop cluster: 1 master + 3 workers + HBase, all from one image.
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this compose file
+# (topology, ports, volumes, memory limits). Reviewed and tested by Member 1.
+#
+#   namenode : NameNode, YARN ResourceManager, MapReduce JobHistory; also the client where jobs, Pig and Spark are launched
+#   worker1-3: DataNode + NodeManager (co-located for data locality)
+#   hbase    : HBase standalone (master, regionserver, ZooKeeper) storing its data on HDFS, plus a Thrift server
+#
+# Total memory limits come to about 12 GB. Docker Desktop's WSL2 VM must be allowed more than that (see README).
+
+name: cp422
+
+x-node: &node
+  image: cp422/hadoop-stack:1.0
+  build: ./docker          # same context for every service; layer cache means it is built once
+  networks: [hadoop]
+  restart: "no"
+  init: true               # tini as PID 1: reaps dead daemons (no zombie RM after an OOM kill) and forwards signals
+
+services:
+  namenode:
+    <<: *node
+    container_name: namenode
+    hostname: namenode
+    command: ["master"]
+    environment:
+      HADOOP_HEAPSIZE_MAX: 768m
+    ports:
+      - "9870:9870"    # HDFS NameNode UI
+      - "8088:8088"    # YARN ResourceManager UI
+      - "19888:19888"  # MapReduce JobHistory UI
+      - "4040:4040"    # Spark driver UI (when an app is running)
+    volumes:
+      - nn-data:/data
+      - ./:/opt/cp422          # scripts in, captured output (hadoop/output) back out
+    mem_limit: 3g
+
+  worker1:
+    <<: *node
+    container_name: worker1
+    hostname: worker1
+    command: ["worker"]
+    environment: &worker-env
+      HADOOP_HEAPSIZE_MAX: 384m
+    volumes: [dn1-data:/data]
+    mem_limit: 2800m
+    depends_on: [namenode]
+
+  worker2:
+    <<: *node
+    container_name: worker2
+    hostname: worker2
+    command: ["worker"]
+    environment: *worker-env
+    volumes: [dn2-data:/data]
+    mem_limit: 2800m
+    depends_on: [namenode]
+
+  worker3:
+    <<: *node
+    container_name: worker3
+    hostname: worker3
+    command: ["worker"]
+    environment: *worker-env
+    volumes: [dn3-data:/data]
+    mem_limit: 2800m
+    depends_on: [namenode]
+
+  hbase:
+    <<: *node
+    container_name: hbase
+    hostname: hbase
+    command: ["hbase"]
+    ports:
+      - "16010:16010"  # HBase master UI
+      - "9090:9090"    # HBase Thrift (for Python clients such as happybase)
+    volumes:
+      - hbase-data:/data
+      - ./:/opt/cp422
+    mem_limit: 1800m
+    depends_on: [namenode, worker1, worker2, worker3]
+
+networks:
+  hadoop:
+    name: cp422_hadoop
+
+volumes:
+  nn-data:
+  dn1-data:
+  dn2-data:
+  dn3-data:
+  hbase-data:
