@@ -58,17 +58,31 @@ fi
 echo "# $(stamp) FAILURE INJECTED: $ACTION" | tee "$TIMELINE"
 printf '%-9s %-5s %-5s %-17s %s\n' time live dead under_replicated job | tee -a "$TIMELINE"
 
+# Record each milestone the first time it is seen (seconds after the failure). "Re-replicated" means
+# under-replicated went above 0 after the node was declared dead and then back to 0. Right after the
+# node is declared dead, the NameNode can briefly still report 0 before it has counted the missing replicas.
 T0=$SECONDS
+DEAD_AT=""; SEEN_UNDER=0; REPL_AT=""; JOB_AT=""
 while :; do
   L=$(live); D=$(dead); U=$(under); J=$(job_state)
   printf '%-9s %-5s %-5s %-17s %s\n' "$(stamp)" "$L" "$D" "$U" "$J" | tee -a "$TIMELINE"
+  T=$((SECONDS - T0))
+  [ -z "$DEAD_AT" ] && [ "${D:-0}" -ge 1 ] && DEAD_AT=$T
+  [ -n "$DEAD_AT" ] && [ "${U:-0}" -gt 0 ] && SEEN_UNDER=1
+  [ -z "$REPL_AT" ] && [ "$SEEN_UNDER" = 1 ] && [ "${U:-1}" = "0" ] && REPL_AT=$T
   job_done=0; kill -0 "$JOB_PID" 2>/dev/null || job_done=1
-  if [ "$job_done" = 1 ] && [ "${D:-0}" -ge 1 ] && [ "${U:-1}" = "0" ]; then break; fi
-  if [ $((SECONDS - T0)) -gt 900 ]; then echo "# timed out after 15 min" | tee -a "$TIMELINE"; break; fi
+  [ -z "$JOB_AT" ] && [ "$job_done" = 1 ] && JOB_AT=$T
+  if [ -n "$JOB_AT" ] && [ -n "$REPL_AT" ]; then break; fi
+  if [ "$T" -gt 900 ]; then echo "# timed out after 15 min" | tee -a "$TIMELINE"; break; fi
   sleep 10
 done
 wait "$JOB_PID"; JOB_RC=$?
-echo "# $(stamp) job exit code $JOB_RC; re-replication complete after $((SECONDS - T0)) s" | tee -a "$TIMELINE"
+{
+  echo "# milestones, seconds after the failure (to within one 15 s sample):"
+  echo "#   worker3 declared dead      : ${DEAD_AT:-n/a} s"
+  echo "#   re-replication complete    : ${REPL_AT:-n/a} s"
+  echo "#   MapReduce job finished     : ${JOB_AT:-n/a} s  (exit code $JOB_RC)"
+} | tee -a "$TIMELINE"
 
 echo "== 4. after (cluster running on 2 DataNodes)"
 {

@@ -1,15 +1,15 @@
 Configured Capacity: 3243303530496 (2.95 TB)
-Present Capacity: 3030377994626 (2.76 TB)
-DFS Remaining: 3027144692222 (2.75 TB)
-DFS Used: 3233302404 (3.01 GB)
+Present Capacity: 3030292713768 (2.76 TB)
+DFS Remaining: 3027031577922 (2.75 TB)
+DFS Used: 3261135846 (3.04 GB)
 DFS Used%: 0.11%
 Replicated Blocks:
-	Under replicated blocks: 3
+	Under replicated blocks: 0
 	Blocks with corrupt replicas: 0
 	Missing blocks: 0
 	Missing blocks (with replication factor 1): 0
 	Low redundancy blocks with highest priority to recover: 0
-	Pending deletion blocks: 0
+	Pending deletion blocks: 2
 Erasure Coded Block Groups: 
 	Low redundancy block groups: 0
 	Block groups with corrupt internal blocks: 0
@@ -20,63 +20,63 @@ Erasure Coded Block Groups:
 -------------------------------------------------
 Live datanodes (3):
 
-Name: 172.18.0.3:9866 (worker1.cp422_hadoop)
-Hostname: worker1
+Name: 172.18.0.3:9866 (worker3.cp422_hadoop)
+Hostname: worker3
 Decommission Status : Normal
 Configured Capacity: 1081101176832 (1006.85 GB)
-DFS Used: 618650804 (589.99 MB)
-Non DFS Used: 16374842188 (15.25 GB)
-DFS Remaining: 1009014665471 (939.72 GB)
-DFS Used%: 0.06%
+DFS Used: 993557604 (947.53 MB)
+Non DFS Used: 16037655452 (14.94 GB)
+DFS Remaining: 1009010537703 (939.71 GB)
+DFS Used%: 0.09%
 DFS Remaining%: 93.33%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
-Xceivers: 6
-Last contact: Sun Nov 22 00:54:33 UTC 2026
-Last Block Report: Sun Nov 22 00:48:21 UTC 2026
-Num of Blocks: 55
+Xceivers: 4
+Last contact: Sun Nov 22 18:42:57 UTC 2026
+Last Block Report: Sun Nov 22 18:37:24 UTC 2026
+Num of Blocks: 80
 
 
 Name: 172.18.0.4:9866 (worker2.cp422_hadoop)
 Hostname: worker2
 Decommission Status : Normal
 Configured Capacity: 1081101176832 (1006.85 GB)
-DFS Used: 1582165371 (1.47 GB)
-Non DFS Used: 15411294853 (14.35 GB)
-DFS Remaining: 1009014698239 (939.72 GB)
-DFS Used%: 0.15%
+DFS Used: 1029233295 (981.55 MB)
+Non DFS Used: 16001979761 (14.90 GB)
+DFS Remaining: 1009010501453 (939.71 GB)
+DFS Used%: 0.10%
 DFS Remaining%: 93.33%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
-Xceivers: 6
-Last contact: Sun Nov 22 00:54:33 UTC 2026
-Last Block Report: Sun Nov 22 00:48:21 UTC 2026
-Num of Blocks: 127
+Xceivers: 5
+Last contact: Sun Nov 22 18:42:57 UTC 2026
+Last Block Report: Sun Nov 22 18:37:24 UTC 2026
+Num of Blocks: 106
 
 
-Name: 172.18.0.5:9866 (worker3.cp422_hadoop)
-Hostname: worker3
+Name: 172.18.0.5:9866 (worker1.cp422_hadoop)
+Hostname: worker1
 Decommission Status : Normal
 Configured Capacity: 1081101176832 (1006.85 GB)
-DFS Used: 1032486229 (984.66 MB)
-Non DFS Used: 15961006763 (14.86 GB)
-DFS Remaining: 1009115328512 (939.81 GB)
-DFS Used%: 0.10%
-DFS Remaining%: 93.34%
+DFS Used: 1238344947 (1.15 GB)
+Non DFS Used: 15792868109 (14.71 GB)
+DFS Remaining: 1009010538766 (939.71 GB)
+DFS Used%: 0.11%
+DFS Remaining%: 93.33%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
-Xceivers: 0
-Last contact: Sun Nov 22 00:54:33 UTC 2026
-Last Block Report: Sun Nov 22 00:53:33 UTC 2026
-Num of Blocks: 80
+Xceivers: 4
+Last contact: Sun Nov 22 18:42:57 UTC 2026
+Last Block Report: Sun Nov 22 18:37:24 UTC 2026
+Num of Blocks: 142
 
 
