@@ -1,7 +1,8 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # 00 · Shared configuration
-# MAGIC Every other notebook starts with `%run ./00_config`. It holds the names, date ranges and the `SAMPLE_MODE` flag
+# MAGIC Every other notebook starts with two cells: one that declares the `sample_mode` widget, then `%run ./00_config`
+# MAGIC (copy the first two code cells of `01_load_gdelt`). This notebook holds the names, date ranges and the `SAMPLE_MODE` flag,
 # MAGIC so that Run All on fresh compute only touches the small sample.
 # MAGIC
 # MAGIC | Mode | Date range (file dates) | Used for |
@@ -25,8 +26,13 @@ try:
 except Exception:
     pass
 
-dbutils.widgets.dropdown("sample_mode", "true", ["true", "false"], "SAMPLE_MODE")
-SAMPLE_MODE = dbutils.widgets.get("sample_mode") == "true"
+# The calling notebook declares the "sample_mode" widget in a cell before its %run, because a widget
+# created here doesn't show in the caller's parameter bar. If the caller forgot, default to sample mode.
+try:
+    SAMPLE_MODE = dbutils.widgets.get("sample_mode") == "true"
+except Exception:
+    SAMPLE_MODE = True
+    print("note: no 'sample_mode' widget in the calling notebook; defaulting to SAMPLE_MODE=True")
 
 # Unity Catalog locations (Free Edition gives every account the "workspace" catalog).
 CATALOG = "workspace"

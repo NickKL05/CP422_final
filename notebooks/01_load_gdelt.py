@@ -12,8 +12,16 @@
 # MAGIC 3. Read them with an explicit schema and overwrite just that month's partition (`replaceWhere`), so a re-run never duplicates rows.
 # MAGIC 4. Log the month in `load_log`, then delete the landing CSVs to stay inside the Free Edition storage quota.
 # MAGIC
-# MAGIC **Run All only loads the sample month.** A full-history load happens only when the `run_full_load` widget is set to `true`.
+# MAGIC **Run All only loads the sample month.** `run_full_load = true` is the only setting that starts a full-history download.
+# MAGIC `SAMPLE_MODE` does not change what gets loaded; it only controls which range the analysis notebooks read.
 # MAGIC If the workspace blocks outbound downloads, use the fallback `tools/gdelt_to_parquet.py` (see the last section).
+
+# COMMAND ----------
+
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell. Reviewed and tested by Member 1.
+# Declared here, not only in 00_config: widgets created inside a %run notebook don't show in this
+# notebook's parameter bar. Every top-level notebook should start with this cell.
+dbutils.widgets.dropdown("sample_mode", "true", ["true", "false"], "SAMPLE_MODE")
 
 # COMMAND ----------
 
@@ -60,7 +68,9 @@ CREATE TABLE IF NOT EXISTS {LOAD_LOG} (
   download_seconds DOUBLE, write_seconds DOUBLE, source STRING, loaded_at TIMESTAMP
 ) USING DELTA
 """)
-range_start, range_end = (FULL_START, FULL_END) if RUN_FULL_LOAD else (RANGE_START, RANGE_END)
+# Only run_full_load can start a full-history download. SAMPLE_MODE=false must not, because a
+# member switching to full analysis should never trigger a year of downloads by accident.
+range_start, range_end = (FULL_START, FULL_END) if RUN_FULL_LOAD else (SAMPLE_START, SAMPLE_END)
 print(f"source={SOURCE}  range={range_start}..{range_end}  force_reload={FORCE_RELOAD}")
 
 # COMMAND ----------
