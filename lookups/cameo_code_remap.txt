@@ -1,0 +1,4 @@
+FROM	TO	REASON
+WSB	PSE	West Bank is part of the Palestinian territory, coded PSE at state level
+GZS	PSE	Gaza Strip is part of the Palestinian territory, coded PSE at state level
+BAG	IRQ	Baghdad is a city in Iraq
