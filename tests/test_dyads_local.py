@@ -13,13 +13,17 @@ worked out on paper:
      calendar week, LEAD gives next week's label;
   7. repartitioning by dyad before the windows leaves exactly one shuffle (no second exchange for the window);
   8. PageRank (notebook 04) matches hand-solvable graphs and its Spark version matches the driver version, and salting
-     (notebook 05) assigns the right buckets, keeps aggregates and join results exact, and shrinks the largest partition.
+     (notebook 05) assigns the right buckets, keeps aggregates and join results exact, and shrinks the largest partition;
+  9. Member 2's cleaned table is only used when it covers every file month of the run, and duplicate events are broken
+     with the same tie-breakers as Member 2's cleaning step.
 
 Needs only PySpark (no Delta, no Databricks). From the repo root:
   pip install pyspark
   python tests/test_dyads_local.py
 If several Python versions are installed, point Spark's workers at the same interpreter first, otherwise they fail with
 PYTHON_VERSION_MISMATCH:  PYSPARK_PYTHON=$(which python) python tests/test_dyads_local.py
+
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this test. Reviewed and tested by Neel Patel.
 """
 import datetime as dt
 import math
@@ -278,6 +282,48 @@ assert before[0] >= 600 and after[0] < before[0] and sum(after) == 1000, (before
 assert dc.median([3, 1, 2]) == 2 and dc.median([4, 1, 2, 3]) == 2.5
 print(f"[8] PageRank OK (cycle = 1/3 each; dangling graph matches closed form; Spark = driver after 3 steps); "
       f"salting OK (buckets {salts}, two-stage counts exact, largest partition {before[0]} -> {after[0]} rows)")
+
+# 9. Coverage guard and duplicate tie-breakers (the contract with Member 2's events_clean) ------------------------
+# Bronze holds September and October; the "cleaned" table only October (as after a sample-mode run of 02).
+cov_rows = [ev("c1", "20260915", "20260915", "USA", "CHN", "1.0", "1") + (2026, 9),
+            ev("c2", "20261015", "20261015", "USA", "CHN", "1.0", "1") + (2026, 10)]
+cov = spark.createDataFrame(cov_rows, ", ".join(f"{c} STRING" for c in COLS) + ", file_year INT, file_month INT")
+cov.createOrReplaceTempView("t_bronze")
+cov.where("file_month = 10").createOrReplaceTempView("t_clean_oct")
+cov.createOrReplaceTempView("t_clean_full")
+info = dc.resolve_events_source(spark, "auto", "t_clean_oct", "t_bronze", "2026-09-01", "2026-10-31")
+assert not info["use_member2"] and info["source"] == "t_bronze" and info["coverage_gaps"] == [(2026, 9)], info
+assert "NOTE: t_clean_oct is missing file months 2026-09" in dc.source_banner(info)
+try:
+    dc.resolve_events_source(spark, "member2_clean", "t_clean_oct", "t_bronze", "2026-09-01", "2026-10-31")
+    raise AssertionError("forcing member2_clean with a missing month must fail")
+except RuntimeError as exc:
+    assert "missing file months 2026-09" in str(exc)
+ok_oct = dc.resolve_events_source(spark, "auto", "t_clean_oct", "t_bronze", "2026-10-01", "2026-10-31")
+ok_full = dc.resolve_events_source(spark, "auto", "t_clean_full", "t_bronze", "2026-09-01", "2026-10-31")
+assert ok_oct["use_member2"] and ok_full["use_member2"] and not ok_full["coverage_gaps"]
+assert dc.resolve_events_source(spark, "bronze_fallback", "t_clean_full", "t_bronze", "2026-09-01",
+                                "2026-10-31")["source"] == "t_bronze"
+
+# Duplicates that tie on DATEADDED and NumMentions: the smaller source_file wins, then the smaller SOURCEURL
+# (Member 2's order). Without these columns the hash tie-break still makes the choice deterministic.
+tie_cols = COLS + ["SOURCEURL", "source_file"]
+tie = spark.createDataFrame([
+    ev("t1", "20261005", "20261005", "USA", "CHN", "5.0", "2") + ("http://b.example", "20261005.export.CSV"),
+    ev("t1", "20261005", "20261005", "USA", "CHN", "-5.0", "2") + ("http://a.example", "20261005.export.CSV"),
+    ev("t2", "20261005", "20261005", "USA", "CHN", "7.0", "2") + ("http://a.example", "20261006.export.CSV"),
+    ev("t2", "20261005", "20261005", "USA", "CHN", "-7.0", "2") + ("http://z.example", "20261005.export.CSV"),
+], ", ".join(f"{c} STRING" for c in tie_cols))
+typed_tie = dc.typed_events(tie)
+assert {"source_file", "source_url"} <= set(typed_tie.columns)
+kept = {r["event_id"]: r["avg_tone"] for r in dc.flag_events(typed_tie, lk, spark).where("reason = 'eligible'").collect()}
+assert kept == {"T1": -5.0, "T2": -7.0}, kept          # ids are upper-cased by typing, as in Member 2's step
+no_tb = dc.flag_events(dc.typed_events(tie.drop("SOURCEURL", "source_file")), lk, spark)
+first = sorted((r["event_id"], r["avg_tone"]) for r in no_tb.where("reason = 'eligible'").collect())
+again = sorted((r["event_id"], r["avg_tone"]) for r in no_tb.where("reason = 'eligible'").collect())
+assert len(first) == 2 and first == again, (first, again)   # one copy per id, the same one every time
+print("[9] coverage guard OK (missing month -> fallback with NOTE, forced -> error, complete -> used); "
+      "duplicate tie-breakers OK (source_file, then SOURCEURL, then hash)")
 
 print("ALL CHECKS PASSED")
 spark.stop()

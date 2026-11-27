@@ -10,6 +10,9 @@ Conventions used throughout:
   * The time axis is SQLDATE (the event date). DATEADDED (the file date) is only used for the recency filter
     0 <= DATEADDED - SQLDATE <= N and, through file_year/file_month, for partition pruning.
   * Weeks start on Monday and are keyed by their start date (never by week-of-year, which wraps at New Year).
+
+AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this module (lookup loading, typing and cleaning rules, dyad-day and rolling-window SQL,
+weekly features, PageRank, salting and timing helpers). Reviewed and tested by Neel Patel.
 """
 import contextlib
 import datetime as dt
@@ -217,10 +220,13 @@ def _date(df, c):
 TYPED_COLUMNS = ["event_id", "event_date", "added_date", "actor1_country", "actor2_country", "event_code",
                  "event_base_code", "event_root_code", "quad_class", "goldstein", "num_mentions", "avg_tone",
                  "is_root"]
+# Carried along only to break ties between duplicate GLOBALEVENTIDs (see flag_events), when the source has them.
+TIEBREAK_COLUMNS = {"source_file": "source_file", "SOURCEURL": "source_url"}
 
 
 def typed_events(df):
-    """Project and type the columns this analysis needs. Event codes stay strings: '010' and '10' are different codes."""
+    """Project and type the columns this analysis needs. Event codes stay strings: '010' and '10' are different codes.
+    source_file and SOURCEURL are kept (as source_file, source_url) when present, for the duplicate tie-breakers."""
     from pyspark.sql import functions as F
     cols = [
         F.expr(_code("GLOBALEVENTID")).alias("event_id"),
@@ -237,6 +243,9 @@ def typed_events(df):
         F.expr(_num("AvgTone", "DOUBLE")).alias("avg_tone"),
         F.expr(_num("IsRootEvent", "INT")).alias("is_root"),
     ]
+    present = {c.lower(): c for c in df.columns}
+    cols += [F.expr(f"NULLIF(TRIM(CAST(`{present[src.lower()]}` AS STRING)), '')").alias(dst)
+             for src, dst in TIEBREAK_COLUMNS.items() if src.lower() in present]
     return df.select(*cols)
 
 
@@ -263,10 +272,13 @@ def flag_events(typed, lookups, spark):
         m = F.create_map(*[F.lit(x) for kv in sorted(remap.items()) for x in kv])
         return F.coalesce(m[F.col(c)], F.col(c))
 
-    # Keep the first report of a duplicated GLOBALEVENTID (earliest DATEADDED, then most mentions) so the choice is
-    # deterministic. dropDuplicates() would keep an arbitrary copy.
-    first_report = Window.partitionBy("event_id").orderBy(F.col("added_date").asc_nulls_last(),
-                                                         F.col("num_mentions").desc_nulls_last())
+    # Keep the first report of a duplicated GLOBALEVENTID: earliest DATEADDED, then most mentions, then smallest
+    # source_file and SOURCEURL (the same order as Member 2's cleaning step), then a hash of the event's fields, so the
+    # choice is deterministic. dropDuplicates() would keep an arbitrary copy.
+    order = [F.col("added_date").asc_nulls_last(), F.col("num_mentions").desc_nulls_last()]
+    order += [F.col(c).asc_nulls_last() for c in ("source_file", "source_url") if c in typed.columns]
+    order.append(F.xxhash64(*TYPED_COLUMNS).asc())
+    first_report = Window.partitionBy("event_id").orderBy(*order)
     df = (typed.withColumn("dup_rank", F.row_number().over(first_report))
                .withColumn("a", remapped("actor1_country"))
                .withColumn("b", remapped("actor2_country")))
@@ -513,6 +525,37 @@ SOURCE_COLUMNS = ["GLOBALEVENTID", "SQLDATE", "DATEADDED", "Actor1CountryCode", 
                   "IsRootEvent"]
 
 
+def file_months(spark, table, range_start, range_end):
+    """The (year, month) file months a table holds inside [range_start, range_end].
+
+    Uses file_year/file_month when the table has them: selecting only partition columns reads no data columns, so this
+    is cheap. Otherwise the file month is derived from DATEADDED.
+    """
+    from pyspark.sql import functions as F
+    df = spark.table(table)
+    lower = {c.lower(): c for c in df.columns}
+    if {"file_year", "file_month"} <= set(lower):
+        y, m = lower["file_year"], lower["file_month"]
+        rows = df.where(month_range_predicate(range_start, range_end, y, m)).select(y, m).distinct().collect()
+    else:
+        d = _date(df, lower["dateadded"])
+        rows = (df.select(d.alias("d")).where(F.col("d").between(F.lit(range_start), F.lit(range_end)))
+                  .select(F.year("d"), F.month("d")).distinct().collect())
+    return {(int(r[0]), int(r[1])) for r in rows}
+
+
+def clean_coverage_gaps(spark, events_clean, events_bronze, range_start, range_end):
+    """File months that events_bronze has for the range but events_clean does not (sorted). Empty = complete.
+
+    Guards against a partially built cleaned table: e.g. 02_clean_events run only in sample mode (October), then this
+    notebook run on the full year, which would otherwise analyse one month and call it the full year.
+    """
+    if not spark.catalog.tableExists(events_bronze):
+        return []
+    return sorted(file_months(spark, events_bronze, range_start, range_end)
+                  - file_months(spark, events_clean, range_start, range_end))
+
+
 def resolve_events_source(spark, choice, events_clean, events_bronze, range_start, range_end):
     """Pick the events table and restrict it to the run's file months.
 
@@ -520,11 +563,23 @@ def resolve_events_source(spark, choice, events_clean, events_bronze, range_star
     'bronze_fallback'. Returns a dict with the chosen table, the in-range DataFrame and everything the banner prints.
     If the table has file_year/file_month, the range is applied on those partition columns so Delta prunes; otherwise
     typed_in_range() filters on DATEADDED after typing (correct, but without pruning).
+
+    Coverage guard: Member 2's table is only used if it holds every file month that events_bronze holds for the range.
+    With 'auto' a gap falls back to events_bronze with a NOTE in the banner; with 'member2_clean' a gap is an error.
     """
     member2_ready = spark.catalog.tableExists(events_clean)
     if choice == "member2_clean" and not member2_ready:
         raise RuntimeError(f"events_source=member2_clean but {events_clean} does not exist in this workspace")
-    use_member2 = choice == "member2_clean" or (choice == "auto" and member2_ready)
+    gaps, coverage_note = [], None
+    if member2_ready and choice != "bronze_fallback":
+        gaps = clean_coverage_gaps(spark, events_clean, events_bronze, range_start, range_end)
+        if gaps:
+            months = ", ".join(f"{y}-{m:02d}" for y, m in gaps)
+            msg = f"{events_clean} is missing file months {months} that {events_bronze} has for this range"
+            if choice == "member2_clean":
+                raise RuntimeError(f"{msg}; run 02_clean_events with the same sample_mode first")
+            coverage_note = f"{msg}; using the fallback instead (run 02_clean_events with the same sample_mode to fix)"
+    use_member2 = choice == "member2_clean" or (choice == "auto" and member2_ready and not gaps)
     source = events_clean if use_member2 else events_bronze
 
     df = spark.table(source)
@@ -541,6 +596,7 @@ def resolve_events_source(spark, choice, events_clean, events_bronze, range_star
                                       lower.get("file_month", "file_month")) if partitioned else None
     return {"source": source, "use_member2": use_member2, "member2_ready": member2_ready,
             "events_clean": events_clean, "predicate": predicate, "warnings": warnings,
+            "coverage_gaps": gaps, "coverage_note": coverage_note,
             "df_in_range": df.where(predicate) if predicate else df,
             "range_start": range_start, "range_end": range_end}
 
@@ -550,9 +606,11 @@ def source_banner(info):
     line = "=" * 100
     how = ("  -> Member 2's cleaned table" if info["use_member2"] else
            f"  -> FALLBACK: cast-and-clean over events_bronze inside the notebook ({info['events_clean']} "
-           f"{'exists but was not chosen' if info['member2_ready'] else 'does not exist yet'})")
+           f"{'exists but was not used' if info['member2_ready'] else 'does not exist yet'})")
     out = [line, f"EVENTS SOURCE: {info['source']}", how,
            f"  partition filter: {info['predicate'] or 'none (source has no file_year/file_month)'}"]
+    if info.get("coverage_note"):
+        out.append(f"  NOTE: {info['coverage_note']}")
     out += [f"  WARNING: {w}" for w in info["warnings"]]
     return "\n".join(out + [line])
 

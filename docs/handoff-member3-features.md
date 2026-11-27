@@ -166,12 +166,27 @@ are included (from `first_full_window_day`). Days without events have no row. Th
 The sample CSV has `[TBD: daily rows in sample run]` rows. The daily table for the full year is written on Databricks
 but not exported, because the local HBase only holds the October sample.
 
-## Agreements still open
+## Agreements
+
+### Settled with Member 2 (checked against Member 2's branch, `02_clean_events`)
+
+| Topic | Agreed |
+| --- | --- |
+| Table | `workspace.gdelt.events_clean` (`EVENTS_CLEAN` in `00_config`), Delta, partitioned by `file_year`/`file_month`, original GDELT column names |
+| Types | `SQLDATE` and `DATEADDED` are `DATE`; `GLOBALEVENTID` and all CAMEO codes are trimmed, upper-cased `STRING` (leading zeros kept); counts `INT`, scores `DOUBLE` |
+| Rules | The same 8 rules, names and order as 03's fallback, with the same lookups and the `WSB`/`GZS` → `PSE`, `BAG` → `IRQ` remap. The table keeps the original codes; 03 applies the remap again, which changes nothing |
+| Duplicates | Both keep the earliest report: smallest `DATEADDED`, then most `NumMentions`, then smallest `source_file` and `SOURCEURL`, then a hash of the row as a last resort |
+| Recency | Not applied in `02_clean_events`. 03 applies `0 <= DATEADDED - SQLDATE <= N` and chooses N from the clean rows |
+| Coverage | 03 uses `events_clean` only if it holds every file month that `events_bronze` has for the run. Otherwise `auto` falls back to `events_bronze`, and the banner names the missing months |
+| Cleaning funnel for the report | When 03 reads `events_clean`, its own funnel shows the input as already clean. The rows removed per rule come from Member 2's `clean_audit` table |
+| Run order | 01 → 02 → 03 → 04 → 05, with 02 run in full mode before 03 runs in full mode in the workspace that produces the full results |
+
+### Still open
 
 | With | Question | Default if no answer |
 | --- | --- | --- |
-| Member 2 | Is the cleaned table called `events_clean` (as now in `00_config`)? Does it keep `file_year`/`file_month` and the original column names? | 03 uses its own fallback cleaning over `events_bronze` and says so in a banner |
-| Member 2 | Do you apply the same `WSB`/`GZS` → `PSE`, `BAG` → `IRQ` remap and recency rule? | 03 applies them anyway; both are idempotent |
+| Member 2 | A sample-mode re-run of 02 after a full run de-duplicates October on its own, so an event first reported in September can reappear in October. Can 02 also drop IDs already kept in other months, or document that the full run comes last? | 03 de-duplicates again over its whole range, so 03's results are unaffected |
+| Member 2 | Can 02's contract check (which re-runs 03's fallback and compares IDs) run in sample mode only, to save Free Edition quota on full runs? | It runs in both modes |
 | Member 4 | Your "sharp rise" definition and train/test cutoff (training must cover at least the first half of the weeks) | The table supplies the inputs; the label stays yours |
 | Member 4 | Is CSV in the group drive OK, or do you want Parquet? | CSV |
 | Member 5 | Is `dyad#yyyyMMdd` with `CHN_USA`-style dyads the key you want? | As above |

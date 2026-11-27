@@ -23,7 +23,11 @@ hand-constructed data whose correct results are known (Section 3.2.9).
 The input is the events table produced by the cleaning stage (Section [TBD: MapReduce, Pig & Hive section]). If that
 table is not present in a workspace, the notebook falls back to the raw table (`events_bronze`, all 58 GDELT columns
 stored as strings) and applies the same rules itself. It prints which source was used, so results from the two paths
-cannot be confused. The full-data run used [TBD: events source].
+cannot be confused. The cleaned table is used only if it covers every file month of the run; if a month is missing
+(for example, when the cleaning stage was run on the sample month only), the notebook falls back to the raw table and
+says so, instead of silently analysing part of the year. Both paths apply the same rules in the same order, including
+the same tie-breaks when choosing which copy of a duplicated event to keep, so they select identical events. The
+full-data run used [TBD: events source].
 
 The raw table is partitioned by the year and month of the file date (`DATEADDED`). Every read filters on these
 partition columns, so Delta skips the files of other months using its transaction log alone. The physical plan
@@ -41,6 +45,11 @@ Only the 13 columns the analysis needs are read and typed:
 
 The cleaning and dyad rules are applied as a single classification. Each row receives the first rule it fails, so the
 removed rows add up exactly to the input and one aggregation reports the effect of every rule (Table [TBD]).
+
+The table below must count rows removed from the **raw** events. If the full-data run read the cleaned table, its rows
+had already passed these rules, so the Spark stage's own funnel shows almost every row as eligible. In that case the
+counts come from the cleaning stage's audit table (`clean_audit`), which applies the same rules in the same order, or
+from a run of the notebook with the raw-table fallback forced. [TBD: state which source the numbers below come from.]
 
 | Rule | Rows removed (full run) |
 | --- | ---: |
@@ -149,7 +158,9 @@ create many near-empty tasks here. The number is instead derived from the input 
 - rounded up to a multiple of eight;
 - bounded between 8 and 200.
 
-That gives 8 partitions for the sample month and [TBD: shuffle_partitions; expected 80] for the full year. On
+The count is sized from the rows the notebook actually reads. For the raw table that is 8 partitions for the sample
+month and 80 for the full year. When the input is the already-cleaned table, which has fewer rows, the count is lower.
+The full-data run used [TBD: shuffle_partitions]. On
 serverless compute the setting [TBD: was applied / was blocked by the platform]. Adaptive query execution then merges
 any remaining small partitions at run time.
 

@@ -2,6 +2,8 @@
 # MAGIC %md
 # MAGIC # 04 · Actor network: which states are most central (Member 3)
 # MAGIC
+# MAGIC AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this notebook (edge list, degree, strength, normalised strength, PageRank, rankings). Reviewed and tested by Neel Patel.
+# MAGIC
 # MAGIC Builds a directed country-to-country graph from the clean dyadic events of notebook 03, and ranks the most central
 # MAGIC states by four measures. There are two graphs: one over **all events**, and one over **material conflict only**
 # MAGIC (`QuadClass = 4`).
@@ -196,6 +198,7 @@ measures_df = spark.sql(CENTRALITY_SQL)
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (PageRank on the driver with Spark DataFrame cross-check). Reviewed and tested by Neel Patel.
 pr_rows, check_rows = [], []
 for graph in ["all", "material_conflict"]:
     g_df = edges_df.where(F.col("graph") == graph).select("src", "dst", F.col("events").cast("double").alias("weight"))

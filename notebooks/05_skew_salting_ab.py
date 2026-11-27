@@ -2,6 +2,8 @@
 # MAGIC %md
 # MAGIC # 05 · Data skew and salting, before and after (Member 3, above and beyond)
 # MAGIC
+# MAGIC AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this notebook (skew measurement, salting experiments, timings, conclusion). Reviewed and tested by Neel Patel.
+# MAGIC
 # MAGIC GDELT is dominated by a few countries. When rows are shuffled by actor country, every row with the same country
 # MAGIC goes to the same partition, so one task gets the United States while the others get a few small countries. The
 # MAGIC whole stage then waits for that one task. **Salting** splits each hot key into several sub-keys (`key`, `salt`),
@@ -123,6 +125,7 @@ print(f"{T_SKEW_INPUT}: {n_rows:,} events")
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (hot-key detection and salt buckets). Reviewed and tested by Neel Patel.
 key_counts = {r["key"]: r["count"] for r in inp.groupBy("key").count().collect()}
 salts = dc.hot_key_salts(key_counts, DEMO_PARTITIONS)
 top = sorted(key_counts.items(), key=lambda kv: -kv[1])[:10]
@@ -150,6 +153,7 @@ salted_inp = dc.add_salt(inp, spark, salts)
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (experiment A: rows per partition before and after salting). Reviewed and tested by Neel Patel.
 before_sizes = dc.partition_sizes(inp.repartition(DEMO_PARTITIONS, "key"))
 after_sizes = dc.partition_sizes(salted_inp.repartition(DEMO_PARTITIONS, "key", "salt"))
 summary_rows = [("before: key", dc.size_summary(before_sizes)), ("after: key + salt", dc.size_summary(after_sizes))]
@@ -177,6 +181,7 @@ A_BEFORE, A_AFTER = dc.size_summary(before_sizes), dc.size_summary(after_sizes)
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (experiment B: unsalted vs two-stage salted aggregation). Reviewed and tested by Neel Patel.
 def agg_unsalted():
     return (inp.repartition(DEMO_PARTITIONS, "key").groupBy("key")
             .agg(F.count(F.lit(1)).alias("events"), F.sum("num_mentions").alias("mentions"),
@@ -222,6 +227,7 @@ for name, fn in [("before", agg_unsalted), ("after", agg_salted)]:
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (experiment C: sort-merge join with and without salting). Reviewed and tested by Neel Patel.
 key_tone = inp.groupBy("key").agg((F.sum(F.col("avg_tone") * F.col("num_mentions")) / F.sum("num_mentions"))
                                   .alias("key_tone"))
 salted_key_tone = dc.explode_salts(key_tone, spark, salts)
@@ -259,6 +265,7 @@ for name, fn in [("before", join_unsalted), ("after", join_salted)]:
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (alternating noop timings). Reviewed and tested by Neel Patel.
 sink = {}
 def timed(fn):
     return lambda: sink.setdefault("mode", dc.run_noop(fn()))
@@ -282,6 +289,7 @@ for exp, t in [("B aggregation", t_agg), ("C join", t_join)]:
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (generated conclusion and results table). Reviewed and tested by Neel Patel.
 def verdict(exp, before_s, after_s):
     change = (after_s - before_s) / before_s if before_s else 0.0
     balance = (f"Salting cut the largest partition from {A_BEFORE['max']:,} to {A_AFTER['max']:,} rows "

@@ -2,6 +2,8 @@
 # MAGIC %md
 # MAGIC # 03 · Dyad tone index and weekly features (Member 3)
 # MAGIC
+# MAGIC AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this notebook (events source switch, cleaning, dyads, rolling tone index, weekly features, export). Reviewed and tested by Neel Patel.
+# MAGIC
 # MAGIC **Research question:** does news tone lead conflict? For every pair of states (a *dyad*) this notebook builds a
 # MAGIC rolling 7-day news-tone index weighted by `NumMentions`, weekly counts of material conflict, and one row per dyad
 # MAGIC per week of features for the model (Member 4). The question becomes: does a drop in a dyad's tone in week *t*
@@ -98,6 +100,11 @@ print(f"SAMPLE_MODE={SAMPLE_MODE}  files {RANGE_START}..{RANGE_END}  outputs end
 # MAGIC The rules in step 4 are applied to **either** source. They are idempotent (a row that is already clean passes them
 # MAGIC unchanged), so the results don't depend on exactly which rules Member 2's table already applied.
 # MAGIC
+# MAGIC **Coverage guard.** Member 2's table is only used if it holds every file month that `events_bronze` holds for this
+# MAGIC run's range. If `02_clean_events` was only run in sample mode (October) and this notebook runs on the full year,
+# MAGIC `auto` falls back to `events_bronze` and the banner says which months were missing, rather than silently analysing
+# MAGIC one month as if it were the year. With `events_source = member2_clean`, a gap stops the run instead.
+# MAGIC
 # MAGIC **Partition pruning.** The filter is written on `file_year`/`file_month` only, so Delta skips other months'
 # MAGIC files using its transaction log. Filtering on `SQLDATE` would scan every partition. The plan line printed below
 # MAGIC must show the months in `PartitionFilters`.
@@ -139,6 +146,7 @@ print("\n".join(scan_lines) if scan_lines else "WARNING: no PartitionFilters lin
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (shuffle partition sizing and setting). Reviewed and tested by Neel Patel.
 rows_in_range = source_in_range.count()
 SHUFFLE_PARTITIONS = dc.shuffle_partitions_for(rows_in_range)
 
@@ -214,6 +222,7 @@ print(f"  {len(lk['countries'])} CAMEO country codes, {len(lk['states'])} states
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (try_cast typing, cleaning and remap rules, broadcast-join check). Reviewed and tested by Neel Patel.
 typed = dc.typed_in_range(src)
 flagged = dc.flag_events(typed, lk, spark)
 
@@ -227,13 +236,20 @@ for ln in join_lines[:4]:
 # MAGIC %md
 # MAGIC ### Cleaning funnel and code report
 # MAGIC
-# MAGIC The first table counts rows per rule. It is saved, so the report can quote it without re-running. The second table
-# MAGIC counts **actor values**, two per event, for every code that was remapped, excluded as a region, or not found. It
-# MAGIC shows how many values the `WSB`/`GZS`/`BAG` remap rewrote, and which unknown codes (if any) are worth adding to
-# MAGIC the lookup.
+# MAGIC The first table counts rows per rule. It is saved, so the report can quote it without re-running.
+# MAGIC
+# MAGIC **Which funnel to quote.** On the fallback path the input is raw bronze, so this table is the full cleaning funnel.
+# MAGIC When the input is Member 2's table, those rows are already clean, so nearly everything here is `eligible`, and the
+# MAGIC rows removed by each rule are in Member 2's `clean_audit` table instead. The cell prints which case applies.
+# MAGIC
+# MAGIC The second table counts **actor values**, two per event, for every code that was remapped, excluded as a region,
+# MAGIC or not found. It shows how many values the `WSB`/`GZS`/`BAG` remap rewrote, and which unknown codes (if any) are
+# MAGIC worth adding to the lookup. On Member 2's table the remapped codes still appear here, because that table keeps
+# MAGIC the original codes.
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (cleaning funnel and remap/region/unknown code report). Reviewed and tested by Neel Patel.
 lag_or_null = F.when(F.col("reason") == "eligible", dc.lag_bucket_col())
 stats = flagged.groupBy("reason", lag_or_null.alias("lag_bucket")).count().collect()
 
@@ -250,6 +266,9 @@ funnel_pd = pd.DataFrame([(i + 1, r, by_reason[r], by_reason[r] / total_input) f
                          columns=["step", "reason", "rows", "share_of_input"])
 save(spark.createDataFrame(funnel_pd), T_FUNNEL)
 display(funnel_pd)
+if use_member2:
+    print(f"note: the input is Member 2's already-clean table, so this funnel shows the input as clean. For rows removed "
+          f"per cleaning rule, quote {CATALOG}.{SCHEMA}.clean_audit (or re-run with events_source = bronze_fallback).")
 
 code_pd = dc.code_side_stats(flagged, lk).orderBy("status", F.desc("count")).toPandas()
 for status, label in [("remapped", "remapped sub-state codes"), ("region_excluded", "region codes excluded"),
@@ -287,6 +306,7 @@ for status, label in [("remapped", "remapped sub-state codes"), ("region_exclude
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (recency rule for N, complete days and weeks). Reviewed and tested by Neel Patel.
 eligible_total = by_reason["eligible"]
 auto_n = dc.choose_recency_days(lag_counts, eligible_total)
 widget_n = dbutils.widgets.get("recency_days")
@@ -366,6 +386,7 @@ print(f"{T_EVENTS}: {n_clean:,} events ({n_clean / total_input:.1%} of the input
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (dyad-day aggregation). Reviewed and tested by Neel Patel.
 save(dc.build_dyad_day(events_df), T_DYAD_DAY)
 dyad_day_df = spark.table(T_DYAD_DAY)
 dyad_day_rows = dyad_day_df.count()
@@ -401,6 +422,7 @@ print(f"{T_DYAD_DAY}: {dyad_day_rows:,} dyad-days")
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (repartition by dyad and rolling 7-day RANGE window). Reviewed and tested by Neel Patel.
 WINDOW_PARTITIONS = dc.shuffle_partitions_for(dyad_day_rows)
 sizes = dc.partition_sizes(dyad_day_df.repartition(WINDOW_PARTITIONS, "dyad"))
 print(f"window partitions: {WINDOW_PARTITIONS} (from {dyad_day_rows:,} dyad-days); rows per partition: "
@@ -464,6 +486,7 @@ display(daily_df.where(F.col("dyad") == top_dyad).orderBy("event_date")
 
 # COMMAND ----------
 
+# AI citation: Claude Code (Claude Opus 5.5, Anthropic) drafted this cell (dyad selection, dense dyad x week calendar and weekly features). Reviewed and tested by Neel Patel.
 wsum = dc.weekly_sums(dyad_day_df, WEEK_STARTS)
 selected = dc.select_dyads(wsum, WEEK_STARTS, SELECTION_FRACTION, MIN_EVENTS_PER_WEEK)
 n_selected = selected.count()
