@@ -142,32 +142,32 @@ Invalid coordinates are handled without dropping the row. A latitude/longitude p
 
 The results go to two Delta tables. `workspace.gdelt.events_clean` holds the 58 typed columns under their original names plus lineage columns, partitioned by `file_year` and `file_month`. `workspace.gdelt.clean_audit` holds one row per file month and rule: `action` (drop or set to `NULL`), `rows_in`, `rows_clean`, `rows_affected` and `pct`. Both tables are written with `replaceWhere` on the processed months, so a sample-mode run replaces only October.
 
-#### 2.6.2 Audit on the 2-day extract
+#### 2.6.2 Audit on the October 2026 sample
 
-The same code (`tests/test_clean_local.py`, local Spark 3.5.3 with ANSI mode on) was run on the 2-day daily extract:
+The notebook was run on Databricks serverless compute in sample mode, over the 31 daily files of October 2026 (`workspace.gdelt.clean_audit`). The same code was also run locally (`tests/test_clean_local.py`, Spark 3.5.3 with ANSI mode on) on the 2-day extract, which gives very similar shares:
 
-| Rule | Rows affected | Share of rows in |
-| --- | ---: | ---: |
-| `missing_event_id` | 0 | 0.000% |
-| `duplicate_event_id` | 0 | 0.000% |
-| `invalid_date` | 0 | 0.000% |
-| `missing_country` | 174,323 | 76.391% |
-| `region_code` | 3,761 | 1.648% |
-| `unknown_code` | 95 | 0.042% |
-| `same_country` | 13,674 | 5.992% |
-| `invalid_measure` | 0 | 0.000% |
-| **Rows in / rows clean** | **228,199 / 36,346** | **15.93% kept** |
-| `invalid_coordinates` (set to `NULL`, kept) | 2 | 0.001% |
+| Rule | October 2026 (Databricks) | Share | 2-day extract (local) | Share |
+| --- | ---: | ---: | ---: | ---: |
+| `missing_event_id` | 0 | 0.000% | 0 | 0.000% |
+| `duplicate_event_id` | 0 | 0.000% | 0 | 0.000% |
+| `invalid_date` | 0 | 0.000% | 0 | 0.000% |
+| `missing_country` | 2,407,354 | 75.325% | 174,323 | 76.391% |
+| `region_code` | 56,435 | 1.766% | 3,761 | 1.648% |
+| `unknown_code` | 1,462 | 0.046% | 95 | 0.042% |
+| `same_country` | 189,895 | 5.942% | 13,674 | 5.992% |
+| `invalid_measure` | 0 | 0.000% | 0 | 0.000% |
+| **Rows in / rows clean** | **3,195,940 / 540,794** | **16.92% kept** | **228,199 / 36,346** | **15.93% kept** |
+| `invalid_coordinates` (set to `NULL`, kept) | 21 | 0.001% | 2 | 0.001% |
 
-Checks on the output: 36,346 distinct event IDs; every actor is a CAMEO state and the two differ after the remap; no missing tone, class or mention count; no invalid coordinate pair. Running the dyad notebooks' own rules on the cleaned rows marks all 36,346 as eligible, and their clean dyadic events are identical whether they start from the raw or the cleaned table (`tests/test_clean_member3_compat.py`).
+Checks on the October output (asserted by the notebook on every run): 540,794 distinct event IDs, and `rows_in = rows_clean + rows dropped` exactly (3,195,940 = 540,794 + 2,655,146); every actor is a CAMEO state and the two differ after the remap; no missing tone, class or mention count; no invalid coordinate pair; the event codes are stored as strings. On the 2-day extract: 36,346 distinct event IDs; every actor is a CAMEO state and the two differ after the remap; no missing tone, class or mention count; no invalid coordinate pair. Running the dyad notebooks' own rules on the cleaned rows marks all 36,346 as eligible, and their clean dyadic events are identical whether they start from the raw or the cleaned table (`tests/test_clean_member3_compat.py`).
 
 Findings:
 
 - **Actor countries are the dominant gap.** `Actor1CountryCode` is empty in 102,032 rows (44.71%) and `Actor2CountryCode` in 130,350 rows (57.12%). At least one of them is empty in 174,323 rows (76.39%). A likely reason is that many coded actors carry no country (for example generic roles such as police or protesters), and some events have only one actor. As a result, the clean table keeps roughly one row in six. Volumes in `events_clean` must be read with this in mind.
 - **Region codes are the second-largest loss** (3,761 rows): reports that name a region such as Europe or the Middle East as an actor rather than a state.
-- **Old events remain, by design.** The clean rows still span `SQLDATE` 2016-10-04 to 2026-10-02, and 249 of them were reported more than 30 days after the event. The dyad analysis removes them with its recency window.
+- **Old events remain, by design.** In October the clean rows still span `SQLDATE` 2016-10-04 to 2026-10-31, and 3,864 of them (0.71%) were reported more than 30 days after the event. The dyad analysis removes them with its recency window.
 - **Coordinates are mostly either valid or absent.** 6,171 raw rows (2.70%) have no ActionGeo coordinates. 46 rows have an empty latitude and a longitude of `42`, a half-filled pair. In the clean table, 2 rows had a coordinate pair set to `NULL`, and 54 have no ActionGeo location.
-- **No duplicate IDs** occur within the extract. Duplicates are checked within the processed range: one month in sample mode, the whole year in a full run.
+- **No duplicate IDs** occur within October. Duplicates are checked within the processed range: one month in sample mode, the whole year in a full run.
 - **The 15-minute files parse cleanly** with the 61-column schema. All 4,594 rows have exactly 61 fields, and `DATEADDED` and `SOURCEURL` fall in the expected columns.
 
 #### 2.6.3 Full-year audit

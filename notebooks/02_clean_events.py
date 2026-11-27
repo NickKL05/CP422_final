@@ -277,8 +277,11 @@ try:
 except Exception as exc:
     print(f"note: could not create the volume ({repr(exc)[:120]}); trying the download anyway")
 try:
+    # A private temp folder for the ZIP: on serverless, each job task runs as a different sandbox user, so the shared
+    # default /tmp/gdelt_dl, created by 01_load_gdelt earlier in the same job, is not writable here.
+    import tempfile
     info = gc.download_and_extract({"name": V2_DEMO_FILE, "url": "https://data.gdeltproject.org/gdeltv2/" + V2_DEMO_FILE,
-                                    "md5": None}, V2_DEMO_DIR, attempts=2)
+                                    "md5": None}, V2_DEMO_DIR, tmp_dir=tempfile.mkdtemp(prefix="gdelt_v2_"), attempts=2)
     v2 = gc.read_15min_csvs(spark, V2_DEMO_DIR)
     v2_typed = gc.to_typed(v2)
     v2_audit = gc.cleaning_audit(gc.tag_drop_rule(v2_typed, LK)).orderBy("rule_order")
