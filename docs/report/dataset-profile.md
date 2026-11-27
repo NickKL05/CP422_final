@@ -1,5 +1,6 @@
-<!-- Draft v2 (Member 2), 2026-11-26. [TBD: ...] marks a number that comes from the full-data Databricks run
-     (workspace.gdelt.clean_audit, events_bronze). All other figures were measured on the data described in the text. -->
+<!-- Draft v3 (Member 2), 2026-11-26. Full-year figures come from the Databricks run of 02_clean_events in full mode
+     (workspace.gdelt.clean_audit) and from queries on workspace.gdelt.events_bronze. All other figures were measured on
+     the data described in the text. -->
 
 ## Dataset Profile
 
@@ -91,25 +92,23 @@ QuadClass distribution in the 2-day daily extract (228,199 rows):
 
 Every GDELT 1.0 daily file holds the events *added* on one day (`DATEADDED`), and that date is the partition key. The *event* date `SQLDATE` can be much earlier, because articles also report on past events. In each month of the full-year table, the earliest `SQLDATE` is almost exactly ten years before the file date (for example, files from November 2025 contain events dated 2015-11-04). The latest `SQLDATE` is the last day of the file month, so no event dates lie in the future.
 
-The 2-day extract shows how the gap is distributed:
+Over the full year, the gap `DATEADDED − SQLDATE` takes only **six distinct values** (query over all 37,225,966 rows of `events_bronze`):
 
-| Measure (2-day extract, 228,199 rows) | Value |
-| --- | ---: |
-| `DATEADDED` values | only the file's own date (20261001 or 20261002) |
-| `SQLDATE` range | 2016-10-03 to 2026-10-02 |
-| Rows with `SQLDATE` after `DATEADDED` | 0 |
-| Rows with `SQLDATE` at most 1 day before `DATEADDED` | 224,616 (98.43%) |
-| Rows more than 30 days old | 1,310 (0.57%) |
-| Rows more than 365 days old | 28 (0.01%) |
+| `DATEADDED − SQLDATE` | Rows | Share |
+| ---: | ---: | ---: |
+| 0 days | 36,426,905 | 97.853% |
+| 1 day | 91,233 | 0.245% |
+| 7 days | 261,018 | 0.701% |
+| 30 days | 162,960 | 0.438% |
+| 365 days | 276,231 | 0.742% |
+| 3,650 days | 7,619 | 0.020% |
 
-The old events are few, but they are not random. The two largest `SQLDATE` values after the file dates themselves are 2026-09-02 (744 rows), about one month before the files, and 2025-10-01 (692 rows), exactly one year before. The data therefore has spikes at dates such as "a month ago" or "a year ago".
+No event is dated after its file, and every date parses. The gap is therefore not a measured reporting delay. An event is dated either on the day it was reported or exactly one day, one week, one month, one year or ten years earlier, which suggests that GDELT 1.0 derives the event date from relative time expressions in the article ("yesterday", "last week", "a year ago") and otherwise uses the publication date. Two consequences follow: an event date is only as precise as the article's wording, and roughly 2% of rows describe events from a week to ten years in the past.
 
 This has two consequences:
 
-- Any analysis by event week must group by `SQLDATE` and must drop events far older than their file date. Otherwise an old event recorded in week *t* would count towards an earlier week, and the timing that the tone-leads-conflict question depends on would be distorted. The cleaning step deliberately keeps these rows. The dyad analysis applies a recency window `0 ≤ DATEADDED − SQLDATE ≤ N` and chooses *N* from the lag distribution of the cleaned rows, so removing old events earlier with a fixed cut-off would bias that choice (Section 2.6).
+- Any analysis by event week must group by `SQLDATE` and must drop events far older than their file date. Otherwise an event reported in week *t* about an earlier week would be counted in the wrong week, and the timing that the tone-leads-conflict question depends on would be distorted. The cleaning step deliberately keeps these rows. The dyad analysis applies a recency window `0 ≤ DATEADDED − SQLDATE ≤ N` and chooses *N* from the lag distribution of the cleaned rows, so removing old events earlier with a fixed cut-off would bias that choice (Section 2.6).
 - Partition pruning works only on the file-date columns. A filter on `SQLDATE` alone still scans every partition, although Delta file statistics reduce the cost.
-
-The full-year age distribution, in 30-day bins of `datediff(DATEADDED, SQLDATE)`, is **[TBD: full-year age histogram from events_bronze, Nov 27]**.
 
 ### 2.5 Storage and compute constraints
 
@@ -165,19 +164,54 @@ Findings:
 
 - **Actor countries are the dominant gap.** `Actor1CountryCode` is empty in 102,032 rows (44.71%) and `Actor2CountryCode` in 130,350 rows (57.12%). At least one of them is empty in 174,323 rows (76.39%). A likely reason is that many coded actors carry no country (for example generic roles such as police or protesters), and some events have only one actor. As a result, the clean table keeps roughly one row in six. Volumes in `events_clean` must be read with this in mind.
 - **Region codes are the second-largest loss** (3,761 rows): reports that name a region such as Europe or the Middle East as an actor rather than a state.
-- **Old events remain, by design.** In October the clean rows still span `SQLDATE` 2016-10-04 to 2026-10-31, and 3,864 of them (0.71%) were reported more than 30 days after the event. The dyad analysis removes them with its recency window.
+- **Old events remain, by design.** In October the clean rows still span `SQLDATE` 2016-10-04 to 2026-10-31, and 3,864 of them (0.71%) were reported more than 30 days after the event (60,283 over the full year). The dyad analysis removes them with its recency window.
 - **Coordinates are mostly either valid or absent.** 6,171 raw rows (2.70%) have no ActionGeo coordinates. 46 rows have an empty latitude and a longitude of `42`, a half-filled pair. In the clean table, 2 rows had a coordinate pair set to `NULL`, and 54 have no ActionGeo location.
-- **No duplicate IDs** occur within October. Duplicates are checked within the processed range: one month in sample mode, the whole year in a full run.
+- **No duplicate IDs** occur, not only within October but across the whole year: the full-year run checks all 37,225,966 rows at once and finds every `GLOBALEVENTID` unique. The rule is kept as a safeguard, because GDELT does not guarantee this.
 - **The 15-minute files parse cleanly** with the 61-column schema. All 4,594 rows have exactly 61 fields, and `DATEADDED` and `SOURCEURL` fall in the expected columns.
 
 #### 2.6.3 Full-year audit
 
-| File year | Rows in | Missing ID | Duplicate ID | Invalid date | Missing country | Region code | Unknown code | Same country | Invalid measure | Rows clean | Coordinates set to NULL |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2025 (Nov–Dec) | 6,223,309 | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] |
-| 2026 (Jan–Oct) | 31,002,657 | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] |
+The notebook was run on Databricks in full mode over all 365 daily files (November 2025 to October 2026). Every assertion in the notebook passed, and `rows_in = rows_clean + rows dropped` holds exactly in every month.
 
-The rows-in figures are the bronze totals from Section 2.2.1. **[TBD: full-year audit from clean_audit (per year via audit_by_year, and per month), Nov 27]**
+| Rule | 2025 (Nov–Dec) | 2026 (Jan–Oct) | Full year | Share of rows in |
+| --- | ---: | ---: | ---: | ---: |
+| Rows in | 6,223,309 | 31,002,657 | 37,225,966 | 100% |
+| `missing_event_id` | 0 | 0 | 0 | 0.000% |
+| `duplicate_event_id` | 0 | 0 | 0 | 0.000% |
+| `invalid_date` | 0 | 0 | 0 | 0.000% |
+| `missing_country` | 4,656,067 | 23,001,972 | 27,658,039 | 74.298% |
+| `region_code` | 131,326 | 564,644 | 695,970 | 1.870% |
+| `unknown_code` | 2,165 | 9,812 | 11,977 | 0.032% |
+| `same_country` | 380,161 | 1,864,834 | 2,244,995 | 6.031% |
+| `invalid_measure` | 0 | 0 | 0 | 0.000% |
+| **Rows clean** | **1,053,590** (16.93%) | **5,561,395** (17.94%) | **6,614,985** | **17.77%** |
+| `invalid_coordinates` (set to `NULL`, kept) | 115 | 416 | 531 | 0.001% |
+
+Per month, the share of rows kept is stable, between 16.65% (November 2025) and 20.82% (March 2026):
+
+| File month | Rows in | Missing country | Region code | Unknown code | Same country | Rows clean | Kept |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2025-11 | 3,218,988 | 2,418,455 | 66,365 | 878 | 197,168 | 536,122 | 16.65% |
+| 2025-12 | 3,004,321 | 2,237,612 | 64,961 | 1,287 | 182,993 | 517,468 | 17.22% |
+| 2026-01 | 3,309,934 | 2,417,963 | 71,941 | 1,005 | 218,005 | 601,020 | 18.16% |
+| 2026-02 | 3,079,386 | 2,300,352 | 55,429 | 1,050 | 188,712 | 533,843 | 17.34% |
+| 2026-03 | 3,508,491 | 2,515,525 | 55,489 | 923 | 206,115 | 730,439 | 20.82% |
+| 2026-04 | 3,080,608 | 2,262,609 | 54,228 | 827 | 184,150 | 578,794 | 18.79% |
+| 2026-05 | 3,101,213 | 2,309,857 | 61,527 | 1,104 | 188,972 | 539,753 | 17.40% |
+| 2026-06 | 2,891,095 | 2,149,529 | 54,113 | 778 | 165,888 | 520,787 | 18.01% |
+| 2026-07 | 3,001,613 | 2,260,484 | 60,229 | 831 | 175,079 | 504,990 | 16.82% |
+| 2026-08 | 2,809,109 | 2,132,576 | 40,126 | 935 | 166,269 | 469,203 | 16.70% |
+| 2026-09 | 3,025,268 | 2,245,723 | 55,127 | 897 | 181,749 | 541,772 | 17.91% |
+| 2026-10 | 3,195,940 | 2,407,354 | 56,435 | 1,462 | 189,895 | 540,794 | 16.92% |
+
+The rules with no rows in this table (missing ID, duplicate ID, invalid date, invalid measure) removed nothing in any month.
+
+Full-year findings:
+
+- **The losses come from two rules.** A missing actor country removes 74.3% of all rows and same-country (domestic) events another 6.0%. The other rules together remove under 2%. The clean table holds 6,614,985 international dyadic events, about 18,100 per day.
+- **The only unknown code is `SSD` (South Sudan).** It occurs 31,230 times as an actor country but is missing from GDELT's CAMEO country list, which predates South Sudan's independence in 2011. Its 11,977 events are dropped rather than guessed. Adding `SSD` to the lookup would be a one-line change agreed by both cleaning steps.
+- **March 2026 keeps the largest share (20.82%)** and also has the most rows of any month (3,508,491), so it contains noticeably more international events than other months.
+- **The typed data is complete.** No row in the year has a missing or unparseable ID, date, tone, QuadClass or mention count, and only 531 rows had an invalid coordinate pair.
 
 ### Sources cited in this section
 
