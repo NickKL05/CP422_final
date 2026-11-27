@@ -5,3 +5,5 @@ __pycache__/
 # Raw GDELT downloads never go in git (the captured job output under hadoop/output/ does)
 *.CSV
 *.CSV.zip
+# core.ignorecase is on, so *.CSV also matches .csv: keep the benchmark timings for Member 5
+!hadoop/output/benchmark/*.csv

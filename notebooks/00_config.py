@@ -42,6 +42,7 @@ VOLUME_ROOT = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}"
 
 # Tables
 EVENTS_BRONZE = f"{CATALOG}.{SCHEMA}.events_bronze"   # raw GDELT rows as strings, partitioned by file_year/file_month (Nick Kunde-Lenny)
+EVENTS_CLEAN = f"{CATALOG}.{SCHEMA}.events_clean"     # typed and cleaned events from the cleaning step (Member 2)
 LOAD_LOG = f"{CATALOG}.{SCHEMA}.load_log"             # one row per loaded month: files, rows, seconds (Nick Kunde-Lenny)
 
 # Date ranges (GDELT file dates = DATEADDED)
